@@ -358,9 +358,6 @@ def main():
     driver = GraphDatabase.driver(
         config["URI"], auth=(config["USERNAME"], config["PASSWORD"]))
     driver.verify_connectivity()
-    driver = GraphDatabase.driver(
-        config["URI"], auth=(config["USERNAME"], config["PASSWORD"]))
-    driver.verify_connectivity()
 
     session = driver.session(database=database) if database else driver.session()
     with session:
