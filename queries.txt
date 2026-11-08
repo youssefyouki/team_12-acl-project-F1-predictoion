@@ -1,0 +1,23 @@
+//1. Query 1
+MATCH (r:Result)-[:FOR_RACE]->(ra:Race {year: 2021}),
+      (r)-[:BY_DRIVER]->(d:Driver)
+RETURN d.forename + ' ' + d.surname AS Driver,
+       sum(r.points) AS Points,
+       sum(CASE WHEN r.position = 1 THEN 1 ELSE 0 END) AS Wins
+ORDER BY Points DESC, Wins DESC, Driver
+
+//2. Query 2
+MATCH (r:Result)-[:FOR_RACE]->(ra:Race),
+      (r)-[:FOR_CONSTRUCTOR]->(c:Constructor),
+      (r)-[:HAS_STATUS]->(s:Status)
+WHERE ra.year >= 2014 AND ra.year <= 2021
+WITH c,
+     count(r) AS Entries,
+     sum(CASE WHEN s.status = 'Finished' OR s.status STARTS WITH '+'
+              THEN 1 ELSE 0 END) AS Classified
+WHERE Entries >= 100
+RETURN c.constructor_name AS Constructor,
+       Entries,
+       Classified,
+       toFloat(Classified) / Entries AS Reliability
+ORDER BY Reliability DESC
